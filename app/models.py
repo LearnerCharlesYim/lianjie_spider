@@ -108,6 +108,7 @@ class News(db.Model):
   content = db.Column(db.Text)
   pub_time = db.Column(db.DateTime,default=datetime.now)
   author_id = db.Column(db.Integer,db.ForeignKey('user.id'))
+  is_check = db.Column(db.Boolean,default=False)
 
   author = db.relationship('User',backref=db.backref('news'))
   be_collect_by_users = db.relationship('User', secondary=user_news_collect, backref='collect_news')

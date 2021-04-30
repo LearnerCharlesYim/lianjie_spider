@@ -38,6 +38,10 @@
                             <p class="post-info" >
                                 <span>作者:{{ item.author.username }}</span>
                                 <span>发表时间:{{ item.pub_time }}</span>
+                                {% if current_user.status == 1 %}
+                                <span><a href="{{ url_for('delete_news',news_id=item.id) }}">删除</a></span>
+                                {% endif %}
+
                             </p>
                         </div>
                     </li>

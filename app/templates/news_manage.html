@@ -1,0 +1,131 @@
+{% extends "base_site.html" %}
+
+{% block title %} Tables {% endblock title %}
+
+{% block stylesheets %}
+  {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/zixun.css') }}">
+{% endblock stylesheets %}
+
+{% block content %}
+  <div class="right_col" role="main" style="min-height: 800px">
+    <div class="">
+      <div class="page-title">
+        <div class="title_left">
+          <h3>资讯管理</h3>
+        </div>
+
+      <div class="row">
+
+        <div class="col-md-9 col-sm-9 col-xs-9">
+          <div class="x_panel">
+            <div class="x_content">
+              <ul class="post-list-group">
+                {% if not news %}
+                    暂无未审核内容
+                {% endif %}
+                  {% for _news in news %}
+                    <li>
+                        <div class="post-info-group">
+                            <p class="post-title" style="position: relative">
+                                <span style="margin-right: 5px;" class="label label-danger">未审核</span>{{ _news.title }}
+                                <i data-id="{{ _news.id }}" style="cursor: pointer;display: none;position: absolute;top:3px;right: 100px; " class="glyphicon glyphicon-triangle-bottom checked"></i>
+                                <i data-id="{{ _news.id }}" style="cursor: pointer;position: absolute;top:3px;right: 100px;" class="glyphicon glyphicon-triangle-left check"></i>
+                                <span class="content" style="width: 538px;font-size: 14px;margin-top: 5px "></span>
+                            </p>
+                            <p class="post-info" >
+                                <span>发表时间:{{ _news.pub_time }}</span>
+
+                                <button data-id="{{ _news.id }}" style="float: right;margin-right: 20px" class="btn btn-danger delete">删除</button>
+                                <button data-id="{{ _news.id }}" style="float: right;margin-right: 20px" class="btn btn-primary access">通过</button>
+                            </p>
+                        </div>
+                    </li>
+                  {% endfor %}
+              </ul>
+
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-3"  id="container" style="height: 300px">
+                    <ul class="nav nav-pills nav-stacked">
+                    <li role="presentation"><a href="{{ url_for('userList') }}">用户管理</a></li>
+                    <li role="presentation" class="active"><a href="{{ url_for('news_manage') }}">资讯管理</a></li>
+                </ul>
+            </div>
+      </div>
+    </div>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ super() }}
+    <script>
+    $(function () {
+        $('.post-title').on('click','.check',function () {
+            var self = $(this);
+            $(this).prev().css('display','block');
+            $(this).css('display','none');
+            var news_id = $(this).attr('data-id');
+            $.ajax({
+                    url:'/load_news/',
+                    type:'GET',
+                    data:{
+                        'news_id':news_id
+                    },
+                    success:function (data) {
+                        self.next().append(data['content']);
+                    }
+            })
+        })
+    });
+    $(function () {
+        $('.post-title').on('click','.checked',function () {
+            $(this).next().css('display','block');
+            $(this).css('display','none');
+            $(this).next().next().empty();
+
+        })
+    });
+
+    $(function () {
+        $('.post-info').on('click','.access',function () {
+            var self = $(this);
+            var news_id = self.attr('data-id');
+            $.ajax({
+                url:'/access/',
+                type:'POST',
+                data:{
+                    'news_id':news_id
+                },
+                success:function (data) {
+                    alert('操作成功');
+                    window.location.reload();
+                }
+            })
+        })
+    });
+
+    $(function () {
+    $('.post-info').on('click','.delete',function () {
+        var self = $(this);
+        var news_id = self.attr('data-id');
+        $.ajax({
+            url:'/reject/',
+            type:'POST',
+            data:{
+                'news_id':news_id
+            },
+            success:function (data) {
+                alert('删除成功');
+                window.location.reload();
+            }
+        })
+    })
+    })
+    </script>
+{% endblock javascripts %}
+
+
+

@@ -23,25 +23,54 @@
           <div class="col-sm-9">
                 <div>
                     <ul class="post-list-group">
-                     <li>
+                    {% if user %}
+                     {% for news in user.news %}
+                    <li>
                         <div class="post-info-group">
                             <p class="post-title">
-                                <a href="#">www</a>
+                                {% if not news.is_check %}
+                                    <span style="margin-right: 5px;" class="label label-danger">待审核</span>
+                                {% endif %}
+                                {% if news.is_check %}
+                                        <a href="{{ url_for('news_detail',id=news.id) }}">{{ news.title }}</a>
+                                    {% else %}
+                                    {{ news.title }}
+                                {% endif %}
+
                             </p>
                             <p class="post-info" >
-                                <span>发表时间:</span>
-                                <span><a href="#">删除</a></span>
+                                <span>发表时间:{{ news.pub_time }}</span>
+                                <span><a href="{{ url_for('delete_news',news_id=news.id) }}">删除</a></span>
                             </p>
                         </div>
                     </li>
+                    {% endfor %}
+                    {% endif %}
+
+                    {% if news %}
+                        {% for _news in news %}
+                       <li>
+                        <div class="post-info-group">
+                            <p class="post-title">
+                                <a href="{{ url_for('news_detail',id=_news.id) }}">{{ _news.title }}</a>
+                            </p>
+                            <p class="post-info" >
+                                <span>作者:{{ _news.author.username }}</span>
+                                <span>发表时间:{{ _news.pub_time }}</span>
+                                <span><a href="{{ url_for('cancel_news',news_id=_news.id) }}">取消收藏</a></span>
+                            </p>
+                        </div>
+                    </li>
+                        {% endfor %}
+                    {% endif %}
 
                     </ul>
                 </div>
           </div>
             <div class="col-sm-3"  id="container" style="height: 300px">
                     <ul class="nav nav-pills nav-stacked">
-                    <li role="presentation" class="active"><a href="#">我的发布</a></li>
-                      <li role="presentation" ><a href="#">我的收藏</a></li>
+                    <li role="presentation" {% if not c %}class="active"{% endif %}><a href="{{ url_for('profile') }}">我的发布</a></li>
+                      <li role="presentation" {% if c %}class="active"{% endif %} ><a href="{{ url_for('profile',c=1) }}">我的收藏</a></li>
                 </ul>
             </div>
 

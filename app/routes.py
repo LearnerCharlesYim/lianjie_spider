@@ -1,4 +1,4 @@
-from flask import render_template, url_for, request, redirect, flash,make_response,send_from_directory
+from flask import render_template, url_for, request, redirect, flash,make_response,send_from_directory,jsonify
 from app import app, db
 from app.models import User, dongcheng, xicheng, fengtai, shijingshan, haidian, chaoyang, SpiderRecord,News,Comment
 from app.forms import LoginForm, CreateAccountForm,AddNewsForm
@@ -461,16 +461,11 @@ def logout():
 def news():
     sort = request.args.get('st',type=int,default=1)
     if sort:
-        _news = News.query.filter_by(type=sort).order_by(News.pub_time.desc()).all()
+        _news = News.query.filter_by(type=sort,is_check=True).order_by(News.pub_time.desc()).all()
     else:
-        _news = News.query.order_by(News.pub_time.desc()).all()
+        _news = News.query.filter_by(is_check=True).order_by(News.pub_time.desc()).all()
     return render_template('zixun.html',news=_news,sort=sort)
 
-
-
-@app.route('/profile/')
-def profile():
-    return render_template('profile.html')
 
 
 @app.route('/pub_news/',methods=['GET','POST'])
@@ -554,5 +549,68 @@ def dcollect():
     else:
         return 'fail'
 
+@app.route('/profile/')
+def profile():
+    user = current_user
+    collection = request.args.get('c',type=int)
+    if collection:
+        news_collections = user.collect_news
+        return render_template('profile.html',news=news_collections,c=collection)
+    return render_template('profile.html',user=user)
 
 
+
+@app.route('/delete_news/<news_id>')
+def delete_news(news_id):
+    _news = News.query.get(news_id)
+    db.session.delete(_news)
+    db.session.commit()
+    if current_user.status == 1:
+        return redirect(url_for('news'))
+    return redirect(url_for('profile'))
+
+
+@app.route('/delete_comment/<news_id>/<comment_id>/')
+def delete_comment(news_id,comment_id):
+    comment = Comment.query.get(comment_id)
+    db.session.delete(comment)
+    db.session.commit()
+    return redirect(url_for('news_detail',id=news_id))
+
+
+@app.route('/cancel_news/<news_id>/')
+def cancel_news(news_id):
+    user = current_user
+    _news = News.query.get(news_id)
+    user.collect_news.remove(_news)
+    db.session.commit()
+    return redirect(url_for('profile',c=1))
+
+@app.route('/news/manage/')
+def news_manage():
+    news = News.query.filter_by(is_check=False).order_by(News.pub_time.desc()).all()
+    return render_template('news_manage.html',news=news)
+
+@app.route('/load_news/')
+def load_news():
+    news_id = request.args.get('news_id')
+    _news = News.query.get(news_id)
+    content = _news.content
+    return jsonify({'content':content})
+
+@app.route('/access/',methods=['POST'])
+def access_news():
+    news_id = request.form.get('news_id')
+    _news = News.query.get(news_id)
+    _news.is_check = True
+    db.session.commit()
+    return 'success'
+
+
+@app.route('/reject/',methods=['POST'])
+def reject():
+    news_id = request.form.get('news_id')
+    _news = News.query.get(news_id)
+    db.session.delete(_news)
+    db.session.commit()
+    return 'success'
