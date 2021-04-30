@@ -1,0 +1,93 @@
+{% extends "base_site.html" %}
+
+{% block title %} Dashboard 1 {% endblock title %}
+
+{% block stylesheets %}
+  {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/zixun.css') }}">
+    <script src="{{ url_for('static', filename='ckeditor/ckeditor.js') }}"></script>
+{% endblock stylesheets %}
+
+{% block content %}
+  <div class="right_col" role="main">
+    <!-- top tiles -->
+
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="dashboard_graph">
+
+          <div class="row x_title">
+            <div class="col-md-6">
+              <h3>发布资讯</h3>
+            </div>
+
+          </div>
+          <div class="row">
+          <div class="col-sm-9">
+                <div>
+                <form action="" method="post">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon">标题</span>
+                                <input type="text" class="form-control" name="title">
+
+                            </div>
+                           {% if form %}
+                               <div style="color: red">
+                               {{ form.title.errors[0] }}
+                               </div>
+
+                                {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon">内容类型</span>
+                                <select name="select" class="form-control">
+
+                                    <option value="1">资讯</option>
+                                    <option value="2">广告</option>
+                                    <option value="3">找房</option>
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            {{ ckeditor.create() }}
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-danger">发布资讯</button>
+                        </div>
+                    </form>
+                    {{ ckeditor.load() }}
+                    {{ ckeditor.config() }}
+                </div>
+          </div>
+
+        </div>
+          <div class="row">
+
+
+<div class="col-sm-6"  id="container2" style="height: 300px"></div>
+
+
+</div>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+    </div>
+
+    <br />
+
+
+  </div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ super()}}
+
+
+        <script type="text/javascript">
+
+
+        </script>
+{% endblock javascripts %}

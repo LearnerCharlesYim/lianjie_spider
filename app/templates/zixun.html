@@ -1,0 +1,86 @@
+{% extends "base_site.html" %}
+
+{% block title %} Dashboard 1 {% endblock title %}
+
+{% block stylesheets %}
+  {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/zixun.css') }}">
+{% endblock stylesheets %}
+
+{% block content %}
+  <div class="right_col" role="main">
+    <!-- top tiles -->
+
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="dashboard_graph">
+          <div class="row x_title">
+            <div class="col-md-6">
+                {% if sort and sort == 1 %}
+                <h3>资讯</h3>
+                    {% elif sort == 2 %}
+                    <h3>广告</h3>
+                    {% elif sort ==3 %}
+                    <h3>找房</h3>
+                {% endif %}
+            </div>
+          </div>
+          <div class="row">
+          <div class="col-sm-9">
+                <div>
+                    <ul class="post-list-group">
+                        {% for item in news %}
+                     <li>
+                        <div class="post-info-group">
+                            <p class="post-title">
+                                <a href="{{ url_for('news_detail',id=item.id) }}">{{ item.title }}</a>
+                            </p>
+                            <p class="post-info" >
+                                <span>作者:{{ item.author.username }}</span>
+                                <span>发表时间:{{ item.pub_time }}</span>
+                            </p>
+                        </div>
+                    </li>
+                        {% endfor %}
+
+
+                    </ul>
+                </div>
+          </div>
+            <div class="col-sm-3"  id="container" style="height: 300px">
+                <a href="{{ url_for('pub_news') }}" type="button" style="width: 250px;" class="btn btn-warning">发布资讯</a>
+                    <ul class="nav nav-pills nav-stacked">
+                    <li role="presentation" {% if sort == 1 %}class="active"{% endif %} ><a href="{{ url_for('news',st=1) }}">资讯</a></li>
+                      <li role="presentation" {% if sort == 2 %}class="active"{% endif %} ><a href="{{ url_for('news',st=2) }}">广告</a></li>
+                      <li role="presentation" {% if sort == 3 %}class="active"{% endif %} ><a href="{{ url_for('news',st=3) }}">找房</a></li>
+                </ul>
+            </div>
+
+        </div>
+          <div class="row">
+
+
+<div class="col-sm-6"  id="container2" style="height: 300px"></div>
+
+
+</div>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+    </div>
+
+    <br />
+
+
+  </div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ super()}}
+
+
+        <script type="text/javascript">
+
+
+        </script>
+{% endblock javascripts %}

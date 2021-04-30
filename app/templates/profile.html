@@ -1,0 +1,75 @@
+{% extends "base_site.html" %}
+
+{% block title %} Dashboard 1 {% endblock title %}
+
+{% block stylesheets %}
+  {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/zixun.css') }}">
+{% endblock stylesheets %}
+
+{% block content %}
+  <div class="right_col" role="main">
+    <!-- top tiles -->
+
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="dashboard_graph">
+          <div class="row x_title">
+            <div class="col-md-6">
+                <h3>个人中心</h3>
+            </div>
+          </div>
+          <div class="row">
+          <div class="col-sm-9">
+                <div>
+                    <ul class="post-list-group">
+                     <li>
+                        <div class="post-info-group">
+                            <p class="post-title">
+                                <a href="#">www</a>
+                            </p>
+                            <p class="post-info" >
+                                <span>发表时间:</span>
+                                <span><a href="#">删除</a></span>
+                            </p>
+                        </div>
+                    </li>
+
+                    </ul>
+                </div>
+          </div>
+            <div class="col-sm-3"  id="container" style="height: 300px">
+                    <ul class="nav nav-pills nav-stacked">
+                    <li role="presentation" class="active"><a href="#">我的发布</a></li>
+                      <li role="presentation" ><a href="#">我的收藏</a></li>
+                </ul>
+            </div>
+
+        </div>
+          <div class="row">
+
+
+<div class="col-sm-6"  id="container2" style="height: 300px"></div>
+
+
+</div>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+    </div>
+
+    <br />
+
+
+  </div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ super()}}
+
+
+        <script type="text/javascript">
+
+
+        </script>
+{% endblock javascripts %}

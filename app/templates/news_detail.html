@@ -1,0 +1,158 @@
+{% extends "base_site.html" %}
+
+{% block title %} Dashboard 1 {% endblock title %}
+
+{% block stylesheets %}
+  {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/news_detail.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/zixun.css') }}">
+{% endblock stylesheets %}
+
+{% block content %}
+  <div class="right_col" role="main">
+    <!-- top tiles -->
+
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="dashboard_graph">
+
+          <div class="row x_title">
+            <div class="col-md-6">
+              <h3>资讯</h3>
+            </div>
+
+          </div>
+          <div class="row">
+          <div class="col-sm-9">
+        <div class="post-container">
+            <h2>{{ news.title }}</h2>
+            <p id="p" class="post-info-group">
+                <span>发表时间：{{ news.pub_time }}</span>
+                <span>作者：{{ news.author.username }}</span>
+                {% if current_user in news.be_collect_by_users %}
+                  <span id="collected" data-id="{{ current_user.id }}" news-id="{{ news.id }}" style="cursor: pointer" class="label label-primary">已收藏</span>
+                {% else %}
+                   <span id="collect" data-id="{{ current_user.id }}" news-id="{{ news.id }}" style="cursor: pointer" class="label label-primary">收藏</span>
+                {% endif %}
+            </p>
+            <div style="padding: 30px 10px;">
+              <article class="post-content" id="post-content">
+                {{ news.content|safe }}
+            </article>
+
+        </div>
+
+        </div>
+        <div class="comment-group">
+            <h3>评论列表</h3>
+              {% if not news.comments %}
+                暂无评论
+            {% endif %}
+            <ul class="comment-list-group" id="ul">
+                {% for comment in comments %}
+                     <li>
+                        <div class="post-info-group">
+                            <p class="post-title">
+                              {{ comment.content | safe }}
+                            </p>
+                            <p class="post-info" >
+                                <span>作者:{{ comment.author.username }}</span>
+                                <span>发表时间:{{ comment.pub_time }}</span>
+                            </p>
+                        </div>
+                    </li>
+              {% endfor %}
+            </ul>
+
+        </div>
+        <div id="addcomment" class="add-comment-group">
+            <h3>发表评论</h3>
+            <form action="{{ url_for('add_comment') }}" method="post">
+            <div class="form-group">
+                    {{ ckeditor.create() }}
+            </div>
+                <div class="form-group"><input type="hidden" name="news_id" value="{{ news.id }}"></div>
+            <div class="comment-btn-group">
+                <button type="submit" class="btn btn-primary">发表评论</button>
+            </div>
+                </form>
+                     {{ ckeditor.load() }}
+                    {{ ckeditor.config() }}
+        </div>
+
+          </div>
+            <div class="col-sm-3"  id="container" style="height: 300px">
+                <a href="{{ url_for('pub_news') }}" type="button" style="width: 250px;" class="btn btn-warning">发布资讯</a>
+                    <ul class="nav nav-pills nav-stacked">
+                    <li role="presentation" class="active"><a href="{{ url_for('news',st=1) }}">资讯</a></li>
+                      <li role="presentation"><a href="{{ url_for('news',st=2) }}">广告</a></li>
+                      <li role="presentation"><a href="{{ url_for('news',st=3) }}">找房</a></li>
+                </ul>
+            </div>
+
+        </div>
+          <div class="row">
+
+
+<div class="col-sm-6"  id="container2" style="height: 300px"></div>
+
+
+</div>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+    </div>
+
+    <br />
+
+
+  </div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ super()}}
+
+    <script type="text/javascript">
+        $(function () {
+            $('#p').on('click','#collect',function () {
+                var self = $(this);
+                var user_id = self.attr('data-id');
+                var news_id = self.attr('news-id');
+                $.ajax({
+                    url:'/collect/',
+                    type:'POST',
+                    data:{
+                        'user_id':user_id,
+                        'news_id':news_id
+                    },
+                    success:function (data) {
+                        self.attr('id','collected');
+                        self.text('已收藏');
+                    }
+                })
+            })
+        });
+
+         $(function () {
+            $('#p').on('click','#collected',function () {
+                var self = $(this);
+                var user_id = self.attr('data-id');
+                var news_id = self.attr('news-id');
+                $.ajax({
+                    url:'/dcollect/',
+                    type:'POST',
+                    data:{
+                        'user_id':user_id,
+                        'news_id':news_id
+                    },
+                    success:function (data) {
+                        self.attr('id','collect');
+                        self.text('收藏');
+                    }
+                })
+            })
+        });
+
+
+    </script>
+{% endblock javascripts %}
